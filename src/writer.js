@@ -46,7 +46,9 @@ async function writeMarkdownFilesPromise(posts, config ) {
 	let skipCount = 0;
 	let delay = 0;
 	const payloads = posts.flatMap(post => {
-		const destinationPath = getPostPath(post, config);
+		const destinationPath = post.meta.type === "page"
+			? path.join(config.output, post.meta.slug + ".md")
+			: getPostPath(post, config);
 		if (checkFile(destinationPath)) {
 			// already exists, don't need to save again
 			skipCount++;
