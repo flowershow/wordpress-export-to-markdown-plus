@@ -67,8 +67,14 @@ function getPostContent(post, turndownService, config) {
 	if (config.saveScrapedImages) {
 		// writeImageFile() will save all content images to a relative /images
 		// folder so update references in post content to match
-		content = content.replace(/(<img[^>]*src=").*?([^\/"]+\.(?:gif|jpe?g|png|svg|webp))(.*?)("[^>]*>)/gi, `$1${config.assets}/images/$2$4`);
-		content = content.replace(/(<a[^>]*href=").*?([^\/"]+\.(?:pdf))("[^>]*>)/gi, `$1${config.assets}/$2$3`)
+
+    // BCD fixes to handle page bundles with local images
+		// BCD content = content.replace(/(<img[^>]*src=").*?([^\/"]+\.(?:gif|jpe?g|png|svg|webp))(.*?)("[^>]*>)/gi, `$1${config.assets}/images/$2$4`);
+		content = content.replace(/(<img[^>]*src=").*?([^\/"]+\.(?:gif|jpe?g|png|svg|webp))(.*?)("[^>]*>)/gi, `$1images/$2$4`);
+		// BCD content = content.replace(/(<a[^>]*href=").*?([^\/"]+\.(?:pdf))("[^>]*>)/gi, `$1${config.assets}/$2$3`)
+    content = content.replace(/(<img[^>]*src=").*?([^/"]+\.(?:gif|jpe?g|png))("[^>]*>)/gi, '$1images/$2$3');
+    // BCD remove image links to my site - make them relative links
+    content = content.replace(/(<a href="https:\/\/www\.mywebsite[^>].*?)(<img[^>]*src=").*?([^/"]+\.(?:gif|jpe?g|png))("[^>]*>)(<\/a>)/gi, '$2images/$3$4');
 	}
 
 	// this is a hack to make <iframe> nodes non-empty by inserting a "." which
@@ -80,7 +86,7 @@ function getPostContent(post, turndownService, config) {
 	content = turndownService.turndown(content);
 
 	// clean up extra spaces in list items
-	content = content.replace(/(-|\d+\.) +/g, '$1 ');
+	// BCD content = content.replace(/(-|\d+\.) +/g, '$1 ');
 
 	// clean up the "." from the iframe hack above
 	content = content.replace(/\.(<\/iframe>)/gi, '$1');
