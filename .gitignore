@@ -1,7 +1,10 @@
+# ignore files that are likely wordpress exports
+/export.xml
+
 # ignore directories
 node_modules/
 content/
 tmp/
 
-#ignore specific filenames
+# ignore specific filenames
 .DS_Store
